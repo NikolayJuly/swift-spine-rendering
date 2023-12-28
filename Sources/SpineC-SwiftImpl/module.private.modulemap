@@ -1,0 +1,4 @@
+module SpineImports_Private [system] {
+    umbrella header "SpineCShim.h"
+    export *
+}

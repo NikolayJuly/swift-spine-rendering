@@ -1,0 +1,4 @@
+module SpineSharedStructs {
+    header "../SpineSwift/Sources/Metal/SpineSharedStructs.h"
+    export *
+}
