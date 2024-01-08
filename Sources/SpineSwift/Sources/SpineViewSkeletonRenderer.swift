@@ -148,11 +148,12 @@ public final class SpineViewSkeletonRenderer: SpineSkeletonRenderer, SpineViewRe
     // MARK: Private
 
     private static func createMainRenderPipelineState(using generalMetalStack: GeneralMetalStack) -> MTLRenderPipelineState {
-        let bundle = Bundle(for: Self.self)
-        let library = try! generalMetalStack.device.makeDefaultLibrary(bundle: bundle)
+        let library = try! generalMetalStack.device.makeDefaultLibrary(bundle: Bundle.module)
         let device = generalMetalStack.device
 
+        #if !targetEnvironment(simulator)
         precondition(device.supportsFamily(.apple3), "We use array of textures in fragment function, so we need some apple3+ GPU family")
+        #endif
 
         let vertexFunction = library.makeFunction(name: "draw_triangles_vertex")!
         let fragmentFunction = library.makeFunction(name: "draw_triangles_fragment")!
@@ -171,7 +172,6 @@ public final class SpineViewSkeletonRenderer: SpineSkeletonRenderer, SpineViewRe
         renderPipelineDescriptor.vertexFunction = vertexFunction
         renderPipelineDescriptor.fragmentFunction = fragmentFunction
         renderPipelineDescriptor.depthAttachmentPixelFormat = .spineDepthTexture
-        renderPipelineDescriptor.colorAttachments[1].pixelFormat = .spineToneGroupTexture
 
         return try! device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
     }
@@ -202,7 +202,6 @@ private extension SpineMesh {
 }
 
 private extension TexturedVertex2D {
-    // TODO: delete `toneGroup: UInt8` if we will not make our own stroke around skeletones
     init(xyz: (Float, Float, Float),
          uv: (Float, Float),
          textureIndex: CChar,

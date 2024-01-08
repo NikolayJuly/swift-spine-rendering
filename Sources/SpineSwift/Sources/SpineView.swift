@@ -27,10 +27,6 @@ public protocol SpineViewRenderer: AnyObject {
     func render(renderPassDescriptor: MTLRenderPassDescriptor, using commandBuffer: MTLCommandBuffer)
 }
 
-public protocol SpineViewRendererFactory {
-    func create(for skeleton: SpineSkeleton) -> SpineViewRenderer
-}
-
 #if canImport(UIKit)
 import UIKit
 
@@ -52,13 +48,11 @@ public final class SpineView: MTKView {
     public init(metalStack: SpineMetalStack,
                 currentMediaTimeProvider: CurrentMediaTimeProvider,
                 cameraFrame: ScreenFrame,
-                rendererFactory: SpineViewRendererFactory,
                 logger: Logger) {
         self.metalStack = metalStack
         self.cameraFrame = cameraFrame
         let bounds = metalStack.renderAreaSize.bounds
         self.clock = SpineSkeletonClockMediaTimeImpl(currentMediaTimeProvider: currentMediaTimeProvider)
-        self.rendererFactory = rendererFactory
         self.logger = logger
 
         super.init(frame: bounds, device: metalStack.generalMetalStack.device)
@@ -74,7 +68,9 @@ public final class SpineView: MTKView {
     // MARK: API
 
     public func add(skeleton: SpineSkeleton) {
-        let renderer = rendererFactory.create(for: skeleton)
+        let renderer = SpineViewSkeletonRenderer(spineSkeleton: skeleton,
+                                                 spineMetalStack: metalStack,
+                                                 logger: logger)
         let renderingElement = RenderingElement(skeleton: skeleton, renderer: renderer)
         renderingElements[skeleton.name] = renderingElement
     }
@@ -129,8 +125,6 @@ public final class SpineView: MTKView {
     private let metalStack: SpineMetalStack
     private var displayLink: CADisplayLink?
 
-    private let rendererFactory: SpineViewRendererFactory
-
     private struct RenderingElement {
         let skeleton: SpineSkeleton
         let renderer: SpineViewRenderer
@@ -146,7 +140,6 @@ public final class SpineView: MTKView {
 
     @objc
     private func update() {
-
         // TODO: We probably might just skip step, if all buffers are busy atm
         // we follow apple best practicies:
         // https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/TripleBuffering.html

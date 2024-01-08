@@ -8,6 +8,9 @@ public protocol ObjectStorageLockKey {}
 
 @MainActor
 public final class ObjectStorage {
+
+    public init() {}
+
     @inlinable
     public subscript<Key: ObjectStorageKey>(_ key: Key.Type) -> Key.Value? {
         get {

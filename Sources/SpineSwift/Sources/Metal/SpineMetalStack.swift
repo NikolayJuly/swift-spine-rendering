@@ -47,10 +47,6 @@ public extension ScreenFrame {
     }
 }
 
-public extension MTLPixelFormat {
-    static let spineToneGroupTexture: MTLPixelFormat = .rg8Uint
-}
-
 public final class SpineMetalStack {
 
     public let generalMetalStack: GeneralMetalStack
@@ -68,7 +64,7 @@ public final class SpineMetalStack {
 
     public let captureScope: MTLCaptureScope
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !targetEnvironment(macCatalyst)
     public convenience init() throws {
         let screenSize = UIScreen.main.bounds.size
         let scale = UIScreen.main.nativeScale
