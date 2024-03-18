@@ -7,6 +7,13 @@ This package provide sample code for spine API usage + Metal rendering.
 Navigate to `./SampleApps/Sample_iOS`. Run `Sample_iOS.xcodeproj` to run sample app with alien death animation in a loop.
 Atm it works with Xcode 15.3 and swift 5.10.
 
+Here is sample video of skeleton animation:
+
+
+[Sample](https://github.com/NikolayJuly/swift-spine-rendering/assets/699116/c643be53-d38e-4f7b-925f-d95f1f73e992)
+
+
+
 ## How to use package to render your skeletons
 
 - You need to call `setupSkeletonSwiftRuntime`, it will setup some functions needed by Spine runtime. Should be called before any other package usage.
