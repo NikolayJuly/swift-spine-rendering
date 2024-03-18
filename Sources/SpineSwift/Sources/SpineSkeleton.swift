@@ -283,7 +283,11 @@ public final class SpineSkeleton {
 
             let generatedMesh: GeneratedMesh?
 
-            precondition(pSlot.slotData.blendMode == SP_BLEND_MODE_NORMAL, "We do not support other blend modes yet")
+            // We actually do not properly support blend modes. Looks like we not even properly support nomral mode,
+            // because our rendering pipeline do not discart pixel, but uses some values for `SBF` and `DBF`(check documentation here: https://developer.apple.com/documentation/metal/mtlblendoperation)
+            // Check how we setup rendering pipeline here: `SpineViewSkeletonRenderer.createMainRenderPipelineState`, specifically color attachment blend mode and settings
+            // Also approach of thislibe is one draw call per whole skeleton. We do not render bone by bone
+            //precondition(pSlot.slotData.blendMode == SP_BLEND_MODE_NORMAL, "We do not support other blend modes yet")
 
             // Here you can read about tintColor [Implementing-Rendering](http://en.esotericsoftware.com/spine-c#Implementing-Rendering)
             // we need mutiply skeleton color * slot color * attachment color
